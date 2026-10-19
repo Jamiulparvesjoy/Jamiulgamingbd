@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAMIUL GAMING GLORY BOT</title>
+<style>
+:root{--bg:#03040a;--glass:rgba(14,20,38,.62);--glass2:rgba(22,30,56,.55);--line:rgba(130,170,255,.14);--txt:#eef2ff;--mut:#8e9bbd;--cy:#52d6ff;--vi:#a56bff;--gold:#ffd27a;--ok:#3fe0a0;--warn:#ffb85c;--bad:#ff6080;--shadow:0 24px 60px rgba(0,0,0,.45)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;min-height:100%;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hidden{display:none!important}
+.wrap{position:relative;z-index:1;max-width:1360px;margin:0 auto;padding:22px 20px 60px}
+
+/* 3D logo */
+.logo{width:50px;height:50px;perspective:600px;flex:0 0 auto}
+.logo .cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:cube 12s ease-in-out infinite}
+.logo .cube>i{position:absolute;inset:0;border-radius:12px;border:1.5px solid rgba(82,214,255,.85);background:linear-gradient(135deg,rgba(82,214,255,.22),rgba(165,107,255,.16));display:grid;place-items:center;font-style:normal;font-weight:900;font-size:19px;color:var(--gold);text-shadow:0 0 14px rgba(255,210,122,.6)}
+.logo .cube>i:nth-child(1){transform:translateZ(25px)}.logo .cube>i:nth-child(2){transform:rotateY(90deg) translateZ(25px);border-color:rgba(165,107,255,.9)}
+.logo .cube>i:nth-child(3){transform:rotateY(180deg) translateZ(25px)}.logo .cube>i:nth-child(4){transform:rotateY(-90deg) translateZ(25px);border-color:rgba(165,107,255,.9)}
+.logo .cube>i:nth-child(5){transform:rotateX(90deg) translateZ(25px)}.logo .cube>i:nth-child(6){transform:rotateX(-90deg) translateZ(25px)}
+
+button{cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.035);color:var(--txt);padding:9px 15px;border-radius:12px;font-size:13px;font-family:inherit;transition:transform .2s,box-shadow .25s,background .25s,border-color .25s}
+button:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(82,214,255,.18);background:rgba(82,214,255,.08);border-color:rgba(82,214,255,.35)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.42;cursor:not-allowed;transform:none;box-shadow:none}
+button.primary{background:linear-gradient(135deg,var(--cy),var(--vi));border:none;color:#06101f;font-weight:700;box-shadow:0 10px 30px rgba(120,130,255,.35)}
+button.gold{background:linear-gradient(135deg,var(--gold),#ffab5c);border:none;color:#1a1204;font-weight:700}
+button.small{padding:6px 11px;font-size:12px;border-radius:9px}
+button.danger:hover{color:var(--bad);border-color:rgba(255,96,128,.45);box-shadow:0 12px 28px rgba(255,96,128,.22)}
+button.tab{border-radius:999px;padding:9px 20px}
+button.tab.active{background:linear-gradient(135deg,rgba(82,214,255,.22),rgba(165,107,255,.22));border-color:rgba(130,170,255,.5)}
+button.chip{flex:1}
+button.chip.active{background:linear-gradient(135deg,var(--cy),var(--vi));border:none;color:#06101f;font-weight:700}
+
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:20px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--shadow);animation:rise .7s cubic-bezier(.2,.8,.2,1) both;position:relative}
+.glass::before{content:"";position:absolute;inset:0;border-radius:20px;padding:1px;background:linear-gradient(135deg,rgba(82,214,255,.35),transparent 40%,rgba(165,107,255,.3));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.7}
+.tilt{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.tilt:hover{transform:perspective(900px) rotateX(3deg) rotateY(-3deg) translateY(-3px)}
+
+.sec{font-size:11px;letter-spacing:2.4px;color:var(--mut);margin:30px 0 14px;text-transform:uppercase;display:flex;align-items:center;gap:12px}
+.sec::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+input,select{width:100%;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt);padding:12px 14px;border-radius:12px;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+select option{background:#0c1224}
+input:focus,select:focus{border-color:var(--cy);box-shadow:0 0 0 3px rgba(82,214,255,.14);background:rgba(255,255,255,.065)}
+input:disabled{opacity:.6;cursor:not-allowed}
+.lbl{display:block;color:var(--mut);font-size:10.5px;margin:14px 0 7px;text-transform:uppercase;letter-spacing:1.6px}
+.msg{font-size:12.5px;margin-top:12px;min-height:17px;color:var(--mut)}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.hint{color:var(--mut);font-size:12.5px;margin-top:8px;min-height:17px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:24px;position:relative;z-index:1}
+.login-box{width:min(460px,94vw);text-align:center;padding:38px 32px}
+.big3d{width:120px;height:120px;margin:0 auto 20px;perspective:800px}
+.big3d .cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:cube 12s ease-in-out infinite}
+.big3d .cube>i{position:absolute;inset:0;border-radius:22px;border:2px solid rgba(82,214,255,.9);background:linear-gradient(135deg,rgba(82,214,255,.22),rgba(165,107,255,.18));display:grid;place-items:center;font-style:normal;font-weight:900;font-size:44px;color:var(--gold);text-shadow:0 0 20px rgba(255,210,122,.7)}
+.big3d .cube>i:nth-child(1){transform:translateZ(60px)}.big3d .cube>i:nth-child(2){transform:rotateY(90deg) translateZ(60px);border-color:rgba(165,107,255,.9)}
+.big3d .cube>i:nth-child(3){transform:rotateY(180deg) translateZ(60px)}.big3d .cube>i:nth-child(4){transform:rotateY(-90deg) translateZ(60px);border-color:rgba(165,107,255,.9)}
+.big3d .cube>i:nth-child(5){transform:rotateX(90deg) translateZ(60px)}.big3d .cube>i:nth-child(6){transform:rotateX(-90deg) translateZ(60px)}
+.login-box h1{font-size:21px;letter-spacing:3px;background:linear-gradient(90deg,var(--gold),var(--cy),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.login-box .sub{color:var(--mut);font-size:12.5px;margin:10px 0 24px;line-height:1.7}
+.login-box .btn{width:100%;padding:14px;margin-top:16px;font-size:14px;letter-spacing:1px}
+
+/* header */
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand h1{font-size:18px;letter-spacing:3px;background:linear-gradient(90deg,var(--gold),var(--cy),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.panelname{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:12px;color:var(--mut);flex-wrap:wrap}
+.pill{font-size:10.5px;letter-spacing:1.2px;padding:4px 11px;border-radius:999px;font-weight:700;text-transform:uppercase}
+.pill.admin{background:linear-gradient(135deg,rgba(255,210,122,.25),rgba(255,140,80,.2));color:var(--gold);border:1px solid rgba(255,210,122,.45)}
+.pill.user{background:rgba(82,214,255,.12);color:var(--cy);border:1px solid rgba(82,214,255,.4)}
+.pill.view{background:rgba(165,107,255,.16);color:#cba8ff;border:1px solid rgba(165,107,255,.45)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 12px var(--ok);animation:pulse 1.8s infinite}
+.dot.off{background:var(--bad);box-shadow:0 0 12px var(--bad)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.viewbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;margin-bottom:18px;border-color:rgba(165,107,255,.45)}
+.viewbar b{color:#cba8ff;font-size:14px;letter-spacing:.5px}
+
+/* key card */
+.keycard{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:18px;align-items:center}
+.kname{font-size:26px;font-weight:800;letter-spacing:1.5px;background:linear-gradient(90deg,var(--gold),var(--cy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.k{color:var(--mut);font-size:10.5px;text-transform:uppercase;letter-spacing:1.5px}
+.v{font-size:22px;font-weight:700;margin-top:5px;font-variant-numeric:tabular-nums}
+.meter{grid-column:1/-1}
+.bar{height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--vi),var(--cy));background-size:200% 100%;animation:shine 2.4s linear infinite;border-radius:999px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.meta{display:flex;justify-content:space-between;color:var(--mut);font-size:12px;margin-top:8px;gap:8px;flex-wrap:wrap}
+@media(max-width:860px){.keycard{grid-template-columns:1fr 1fr}.two,.three{grid-template-columns:1fr}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.stat .val{font-size:28px;font-weight:800;margin-top:9px;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fff,#b9c6ef);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* guilds + groups */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.gcard{padding:18px}
+.gcard h3{font-size:13px;letter-spacing:1.2px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.gid{font-family:Consolas,monospace;color:var(--gold);font-size:13px;margin-top:10px;word-break:break-all}
+.chipline{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chipline span{font-size:11.5px;padding:4px 9px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#d6dffb}
+.tag{font-size:10.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+.tag.full{color:var(--ok);border-color:rgba(63,224,160,.45)}
+
+/* create */
+.createbox{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:start}
+@media(max-width:860px){.createbox{grid-template-columns:1fr}}
+.tiny{font-size:11px;color:var(--mut)}
+
+/* table */
+.tablewrap{overflow-x:auto;border-radius:18px}
+table.grid{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;min-width:980px}
+table.grid th{position:sticky;top:0;background:rgba(14,20,38,.92);text-align:left;color:var(--mut);font-size:10.5px;text-transform:uppercase;letter-spacing:1.4px;padding:13px 12px;border-bottom:1px solid var(--line);font-weight:600;backdrop-filter:blur(8px)}
+table.grid td{padding:13px 12px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:middle;white-space:nowrap}
+table.grid tr{transition:background .25s}
+table.grid tbody tr:hover td{background:rgba(82,214,255,.05)}
+.nick{font-weight:700;font-size:13.5px}
+.mono{font-family:Consolas,monospace;font-size:12px;color:#c9d3f5}
+.gold{color:var(--gold)}
+.st{font-size:10.5px;font-weight:700;letter-spacing:.8px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);text-transform:uppercase}
+.st.ok{color:var(--ok);border-color:rgba(63,224,160,.4)}
+.st.play{color:var(--cy);border-color:rgba(82,214,255,.4)}
+.st.wait{color:var(--warn);border-color:rgba(255,184,92,.4)}
+.st.bad{color:var(--bad);border-color:rgba(255,96,128,.4)}
+.st.pause{color:var(--mut)}
+.rowbtn{display:inline-flex;gap:6px}
+.empty{color:var(--mut);text-align:center;padding:40px 14px;border:1px dashed var(--line);border-radius:18px;font-size:13px}
+.stepper{display:inline-flex;align-items:center;gap:8px}
+.stepper button{padding:2px 9px;border-radius:8px}
+.switch{display:inline-block;width:40px;height:22px;border-radius:999px;background:rgba(255,255,255,.1);position:relative;cursor:pointer;vertical-align:middle;transition:background .3s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .3s}
+.switch.on{background:linear-gradient(135deg,var(--ok),var(--cy))}
+.switch.on::after{transform:translateX(18px)}
+.keyval{font-family:Consolas,monospace;color:var(--gold);font-size:12px;letter-spacing:.3px}
+.newkey{margin-top:16px;padding:18px;border-radius:16px;border:1px solid rgba(255,210,122,.4);background:linear-gradient(135deg,rgba(255,210,122,.08),rgba(255,140,80,.04));display:none}
+.newkey .keyval{font-size:16px;word-break:break-all;display:block;margin:10px 0}
+
+/* logs */
+.logs{max-height:360px;overflow:auto;font-family:Consolas,"Courier New",monospace;font-size:12px;line-height:1.8}
+.log{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.log.success{color:var(--ok)}.log.warning{color:var(--warn)}.log.error{color:var(--bad)}.log.info{color:var(--mut)}
+
+/* bulk */
+#bulk{display:none;margin-top:18px}
+.bulkrow{display:flex;align-items:center;gap:20px}
+.orb{width:74px;height:74px;position:relative;transform-style:preserve-3d;flex:0 0 auto;animation:orb 7s linear infinite}
+.orb i{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:var(--cy);border-right-color:var(--vi)}
+.orb i:nth-child(1){animation:spin 1.2s linear infinite}
+.orb i:nth-child(2){inset:12px;border-top-color:var(--vi);border-left-color:var(--cy);animation:spin 1.8s linear infinite reverse}
+.orb i:nth-child(3){inset:25px;border-top-color:#fff;animation:spin .9s linear infinite}
+.bt{flex:1;min-width:0}
+.bt .t{font-size:15px;font-weight:700}
+.bt .s{font-size:12px;color:var(--mut);margin-top:5px}
+
+/* overlay */
+#gen{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:rgba(2,3,8,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#gen.show{display:flex;animation:fade .4s ease both}
+.genbox{text-align:center;width:min(440px,92vw)}
+.cube3{width:96px;height:96px;margin:0 auto 24px;position:relative;transform-style:preserve-3d;animation:cube 3.4s ease-in-out infinite}
+.cube3 i{position:absolute;inset:0;border:2px solid rgba(82,214,255,.8);background:rgba(82,214,255,.05);box-shadow:0 0 24px rgba(82,214,255,.25) inset}
+.cube3 i:nth-child(1){transform:translateZ(48px)}.cube3 i:nth-child(2){transform:rotateY(90deg) translateZ(48px);border-color:rgba(165,107,255,.9)}
+.cube3 i:nth-child(3){transform:rotateY(180deg) translateZ(48px)}.cube3 i:nth-child(4){transform:rotateY(-90deg) translateZ(48px);border-color:rgba(165,107,255,.9)}
+.cube3 i:nth-child(5){transform:rotateX(90deg) translateZ(48px)}.cube3 i:nth-child(6){transform:rotateX(-90deg) translateZ(48px)}
+#gen .g1{font-size:18px;font-weight:800;letter-spacing:1.5px}
+#gen .g2{color:var(--mut);font-size:13px;margin-top:9px;min-height:18px}
+#gen .bar{margin-top:22px}
+
+.toast{position:fixed;right:20px;bottom:20px;z-index:40;background:var(--glass);border:1px solid var(--line);padding:13px 18px;border-radius:14px;font-size:13px;backdrop-filter:blur(14px);transform:translateY(150%);opacity:0;transition:all .45s cubic-bezier(.2,.8,.2,1);max-width:88vw;box-shadow:var(--shadow)}
+.toast.show{transform:none;opacity:1}
+.toast.ok{border-color:rgba(63,224,160,.55)}.toast.bad{border-color:rgba(255,96,128,.55)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes orb{from{transform:rotateX(-14deg) rotateY(0)}to{transform:rotateX(-14deg) rotateY(360deg)}}
+@keyframes cube{0%{transform:rotateX(0) rotateY(0)}50%{transform:rotateX(180deg) rotateY(90deg)}100%{transform:rotateX(360deg) rotateY(360deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes shine{to{background-position:200% 0}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<!-- ================= LOGIN ================= -->
+<section id="login">
+  <div class="glass login-box">
+    <div class="big3d"><div class="cube">
+      <i>J</i><i>G</i><i>G</i><i>B</i><i>&#9733;</i><i>&#10022;</i>
+    </div></div>
+    <h1>JAMIUL GAMING GLORY BOT</h1>
+    <div class="sub">Enter your access key.<br>Admin key opens the admin panel. A user key opens your own panel.</div>
+    <input id="keyIn" type="password" placeholder="Access key" autocomplete="off">
+    <button class="primary btn" id="loginBtn">ENTER</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div class="wrap hidden" id="app">
+  <header>
+    <div class="brand">
+      <div class="logo"><div class="cube"><i>J</i><i>G</i><i>G</i><i>B</i><i>&#9733;</i><i>&#10022;</i></div></div>
+      <div>
+        <h1>JAMIUL GAMING GLORY BOT</h1>
+        <div class="panelname">
+          <span class="dot" id="dot"></span>
+          <span id="panelTitle">Panel</span>
+          <span class="pill" id="rolePill"></span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="adminonly" data-act="pause_all">Pause all</button>
+      <button class="adminonly" data-act="clear_logs">Clear logs</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <!-- admin: top tabs (not in panel view) -->
+  <div class="tabs hidden" id="adminTabs">
+    <button class="tab active" data-tab="users">Users</button>
+    <button class="tab" data-tab="overview">All accounts</button>
+  </div>
+
+  <!-- admin viewing a user panel -->
+  <div class="glass viewbar hidden" id="viewBar">
+    <div><span class="k">Viewing panel of</span><br><b id="viewName"></b></div>
+    <div class="actions"><button class="primary" id="backAdmin">Back to admin</button></div>
+  </div>
+
+  <!-- ===== PANEL (user panel / admin viewing a user) ===== -->
+  <div id="panel" class="hidden">
+    <div class="glass" id="keycard"></div>
+
+    <div class="sec">Overview</div>
+    <div class="stats">
+      <div class="glass stat tilt"><div class="k">Accounts</div><div class="val" id="s-acc">0</div></div>
+      <div class="glass stat tilt"><div class="k">Active matches</div><div class="val" id="s-act">0</div></div>
+      <div class="glass stat tilt"><div class="k">Total EXP</div><div class="val" id="s-exp">0</div></div>
+      <div class="glass stat tilt"><div class="k">Matches played</div><div class="val" id="s-match">0</div></div>
+      <div class="glass stat tilt"><div class="k">EXP / hour</div><div class="val" id="s-eph">0</div></div>
+      <div class="glass stat tilt"><div class="k">Uptime</div><div class="val" id="s-up">0s</div></div>
+    </div>
+
+    <div class="glass hidden" id="bulk">
+      <div class="bulkrow">
+        <div class="orb"><i></i><i></i><i></i></div>
+        <div class="bt">
+          <div class="t" id="bulk-t">Generating</div>
+          <div class="s" id="bulk-s"></div>
+          <div class="bar"><i id="bulk-bar"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">Guilds</div>
+    <div class="cards" id="guildCards"></div>
+
+    <div class="sec">Add accounts</div>
+    <div class="glass">
+      <div class="createbox">
+        <div>
+          <label class="lbl">Account count</label>
+          <div class="row">
+            <button class="chip" data-n="4">4 · 1 squad</button>
+            <button class="chip" data-n="8">8 · 2 squads</button>
+            <button class="chip" data-n="12">12 · 3 squads</button>
+          </div>
+          <input id="count" type="number" min="1" max="12" value="4" style="margin-top:12px">
+          <div class="hint" id="countHint"></div>
+          <label class="lbl">Guild UID</label>
+          <input id="guild" placeholder="Guild UID (numbers only)" inputmode="numeric">
+        </div>
+        <div>
+          <div class="two">
+            <div>
+              <label class="lbl">Account name</label>
+              <input id="name" maxlength="12" placeholder="JAMIUL">
+            </div>
+            <div>
+              <label class="lbl">Server</label>
+              <select id="region">
+                <option value="BD">BD · Bangladesh</option><option value="IND">IND · India</option>
+                <option value="ID">ID · Indonesia</option><option value="SG">SG · Singapore</option>
+                <option value="PK">PK · Pakistan</option><option value="ME">ME · Middle East</option>
+                <option value="BR">BR · Brazil</option><option value="NA">NA · USA</option>
+                <option value="TH">TH · Thailand</option><option value="VN">VN · Vietnam</option>
+                <option value="MY">MY · Malaysia</option><option value="PH">PH · Philippines</option>
+                <option value="TW">TW · Taiwan</option><option value="CIS">CIS · Russia</option>
+                <option value="SAC">SAC · South America</option>
+              </select>
+            </div>
+          </div>
+          <div class="hint" id="createHint"></div>
+          <button class="primary" id="createBtn" style="width:100%;margin-top:16px;padding:14px;letter-spacing:1px">CREATE &amp; START</button>
+          <div class="msg" id="createMsg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">Groups</div>
+    <div class="cards" id="squads"></div>
+
+    <div class="sec">Accounts</div>
+    <div class="glass tablewrap">
+      <table class="grid">
+        <thead><tr>
+          <th>Account</th><th>Game UID</th><th>Guild UID</th><th>Group</th><th>Status</th>
+          <th>Level</th><th>EXP</th><th>Gained</th><th>Matches</th><th>Active</th><th>Uptime</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="accRows"></tbody>
+      </table>
+      <div class="empty hidden" id="accEmpty">No accounts yet. Use "Add accounts" above.</div>
+    </div>
+
+    <div class="sec">Activity</div>
+    <div class="glass"><div class="logs" id="logs"></div></div>
+  </div>
+
+  <!-- ===== ADMIN: USERS ===== -->
+  <div id="tab-users" class="hidden">
+    <div class="glass">
+      <div class="kname" style="font-size:18px">Create user key</div>
+      <div class="hint">Account name is fixed for the key. Max users = how many people can use the key at the same time.</div>
+      <div class="three" style="margin-top:14px">
+        <div><label class="lbl">Account name (fixed)</label><input id="kName" maxlength="12" placeholder="JAMIUL"></div>
+        <div><label class="lbl">Squad limit (4 accounts each)</label><input id="kSquad" type="number" min="1" max="100" value="3"></div>
+        <div><label class="lbl">Max users</label><input id="kUsers" type="number" min="1" max="100" value="1"></div>
+      </div>
+      <div class="row" style="margin-top:14px"><button class="primary" id="kCreate" style="padding:12px 26px">GENERATE KEY</button></div>
+      <div class="msg" id="kMsg"></div>
+      <div class="newkey" id="newKey">
+        <div class="k">New key, copy and give it to the user</div>
+        <span class="keyval" id="newKeyVal"></span>
+        <button class="small" id="copyKey">Copy key</button>
+      </div>
+    </div>
+
+    <div class="sec">All user keys</div>
+    <div class="glass tablewrap">
+      <table class="grid">
+        <thead><tr>
+          <th>Name</th><th>Key</th><th>Guilds</th><th>Accounts</th><th>Users</th><th>Squads</th><th>Enabled</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="keyRows"></tbody>
+      </table>
+      <div class="empty hidden" id="keyEmpty">No user keys yet.</div>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN: ALL ACCOUNTS ===== -->
+  <div id="tab-overview" class="hidden">
+    <div class="sec">Every account</div>
+    <div class="glass tablewrap">
+      <table class="grid">
+        <thead><tr>
+          <th>Owner key</th><th>Account</th><th>Game UID</th><th>Guild UID</th><th>Added by</th><th>Status</th>
+          <th>Level</th><th>EXP</th><th>Matches</th><th>Active</th><th>Uptime</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="allRows"></tbody>
+      </table>
+      <div class="empty hidden" id="allEmpty">No accounts yet.</div>
+    </div>
+  </div>
+</div>
+
+<!-- generation overlay -->
+<div id="gen">
+  <div class="genbox">
+    <div class="cube3"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="g1" id="gen-t">Generating accounts</div>
+    <div class="g2" id="gen-s">Connecting to server...</div>
+    <div class="bar"><i id="gen-bar" style="width:5%"></i></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- 3D background ----------
+(function () {
+  if (typeof THREE === 'undefined') return;
+  const canvas = document.getElementById('bg');
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+  camera.position.z = 72;
+  const N = 1800, pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    pos[i * 3] = (Math.random() - 0.5) * 250;
+    pos[i * 3 + 1] = (Math.random() - 0.5) * 170;
+    pos[i * 3 + 2] = (Math.random() - 0.5) * 170;
+  }
+  const pg = new THREE.BufferGeometry();
+  pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const particles = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0x52d6ff, size: 0.42, transparent: true, opacity: 0.7 }));
+  scene.add(particles);
+  const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(16, 3.2, 180, 18),
+    new THREE.MeshBasicMaterial({ color: 0xa56bff, wireframe: true, transparent: true, opacity: 0.2 }));
+  knot.position.set(0, 0, -30); scene.add(knot);
+  const ico = new THREE.Mesh(new THREE.IcosahedronGeometry(10, 1),
+    new THREE.MeshBasicMaterial({ color: 0x52d6ff, wireframe: true, transparent: true, opacity: 0.26 }));
+  ico.position.set(-36, 14, -12); scene.add(ico);
+  const ico2 = new THREE.Mesh(new THREE.OctahedronGeometry(7, 0),
+    new THREE.MeshBasicMaterial({ color: 0xffd27a, wireframe: true, transparent: true, opacity: 0.22 }));
+  ico2.position.set(38, -16, -8); scene.add(ico2);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(31, 0.12, 8, 150),
+    new THREE.MeshBasicMaterial({ color: 0xffd27a, transparent: true, opacity: 0.2 }));
+  ring.rotation.x = Math.PI / 2.4; ring.position.z = -25; scene.add(ring);
+  let mx = 0, my = 0;
+  window.addEventListener('mousemove', function (e) {
+    mx = e.clientX / window.innerWidth - 0.5; my = e.clientY / window.innerHeight - 0.5;
+  });
+  function resize() {
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize); resize();
+  function animate() {
+    requestAnimationFrame(animate);
+    knot.rotation.x += 0.0035; knot.rotation.y += 0.005;
+    ico.rotation.x += 0.004; ico.rotation.y += 0.006;
+    ico2.rotation.x -= 0.005; ico2.rotation.z += 0.004;
+    ring.rotation.z += 0.003; particles.rotation.y += 0.0007;
+    camera.position.x += (mx * 14 - camera.position.x) * 0.03;
+    camera.position.y += (-my * 10 - camera.position.y) * 0.03;
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ---------- helpers ----------
+const $ = function (s) { return document.querySelector(s); };
+const esc = function (s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+};
+const fmt = function (n) { return Number(n || 0).toLocaleString('en-US'); };
+function fmtUp(s) {
+  s = Math.max(0, Number(s) || 0);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = Math.floor(s % 60);
+  return h + 'h ' + m + 'm ' + x + 's';
+}
+function toast(text, cls) {
+  const t = $('#toast');
+  t.textContent = text;
+  t.className = 'toast show ' + (cls || '');
+  clearTimeout(toast._h);
+  toast._h = setTimeout(function () { t.className = 'toast'; }, 2800);
+}
+function setMsg(sel, text, cls) { const m = $(sel); m.textContent = text; m.className = 'msg ' + (cls || ''); }
+
+const TOKEN_KEY = 'jg_token';
+let TOKEN = localStorage.getItem(TOKEN_KEY) || '';
+let ROLE = '', VIEW = '', VIEW_NAME = '', KEYINFO = null, TAB = 'users', pollH = null, lastBulk = null, pollUsers = 0;
+
+async function api(path, body) {
+  const opts = { method: body ? 'POST' : 'GET', headers: { 'X-Auth': TOKEN } };
+  if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+  const r = await fetch(path, opts);
+  const j = await r.json().catch(function () { return {}; });
+  if (r.status === 401) logout(true);
+  return j;
+}
+
+// ---------- session ----------
+$('#loginBtn').addEventListener('click', doLogin);
+$('#keyIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+async function doLogin() {
+  const key = $('#keyIn').value.trim();
+  if (!key) return setMsg('#loginMsg', 'Enter your access key', 'bad');
+  setMsg('#loginMsg', 'Checking...');
+  const r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: key }) }).then(function (x) { return x.json(); });
+  if (r.status !== 'ok') return setMsg('#loginMsg', r.error || 'Login failed', 'bad');
+  TOKEN = r.token; localStorage.setItem(TOKEN_KEY, TOKEN);
+  $('#keyIn').value = '';
+  start(r.role, r.name, r.info);
+}
+function start(role, name, info) {
+  ROLE = role; KEYINFO = info || null; VIEW = ''; VIEW_NAME = '';
+  $('#login').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  $('#guild').value = '';
+  if (ROLE !== 'admin') $('#name').value = name || '';
+  if (pollH) clearInterval(pollH);
+  pollH = setInterval(tick, 2000);
+  layout();
+  tick();
+}
+function logout(silent) {
+  api('/api/auth/logout', {}).catch(function () {});
+  TOKEN = ''; localStorage.removeItem(TOKEN_KEY);
+  if (pollH) clearInterval(pollH);
+  $('#app').classList.add('hidden');
+  $('#login').classList.remove('hidden');
+  if (silent) setMsg('#loginMsg', 'Session ended, please log in again', 'bad');
+}
+$('#logoutBtn').addEventListener('click', function () { logout(false); });
+(async function restore() {
+  if (!TOKEN) return;
+  const r = await api('/api/auth/me');
+  if (r && r.status === 'ok') { ROLE = r.role; start(r.role, r.name, r.info); }
+  else { TOKEN = ''; localStorage.removeItem(TOKEN_KEY); }
+})();
+
+// ---------- layout: admin tabs / panel ----------
+function inPanel() { return ROLE !== 'admin' || !!VIEW; }
+function layout() {
+  const admin = ROLE === 'admin';
+  $('#rolePill').textContent = admin ? (VIEW ? 'Admin · viewing' : 'Admin') : 'User';
+  $('#rolePill').className = 'pill ' + (admin ? (VIEW ? 'view' : 'admin') : 'user');
+  $('#panelTitle').textContent = inPanel()
+    ? (admin ? 'Admin panel · ' + VIEW_NAME : 'User panel · ' + (KEYINFO ? KEYINFO.name : ''))
+    : 'Admin panel unlimited';
+  document.querySelectorAll('.adminonly').forEach(function (el) { el.classList.toggle('hidden', !admin); });
+  $('#adminTabs').classList.toggle('hidden', !admin || !!VIEW);
+  $('#viewBar').classList.toggle('hidden', !(admin && VIEW));
+  if (admin && VIEW) $('#viewName').textContent = VIEW_NAME;
+  $('#panel').classList.toggle('hidden', !inPanel());
+  $('#tab-users').classList.toggle('hidden', !(admin && !VIEW && TAB === 'users'));
+  $('#tab-overview').classList.toggle('hidden', !(admin && !VIEW && TAB === 'overview'));
+  document.querySelectorAll('#adminTabs .tab').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === TAB); });
+  $('#name').disabled = !admin || !!VIEW;
+  if (!admin) $('#name').value = KEYINFO ? KEYINFO.name : '';
+  if (admin && VIEW) $('#name').value = VIEW_NAME;
+}
+document.querySelectorAll('#adminTabs .tab').forEach(function (b) {
+  b.addEventListener('click', function () { TAB = b.dataset.tab; layout(); if (TAB === 'users') loadUsers(); });
+});
+async function openView(key) {
+  const r = await api('/api/admin/view', { key: key });
+  if (r.status !== 'ok') return toast(r.error || 'Could not open panel', 'bad');
+  VIEW = r.view; VIEW_NAME = r.view_name; KEYINFO = r.view_info || null;
+  layout(); tick();
+  toast('Opened panel: ' + VIEW_NAME, 'ok');
+}
+$('#backAdmin').addEventListener('click', async function () {
+  await api('/api/admin/view', { key: '' });
+  VIEW = ''; VIEW_NAME = ''; KEYINFO = null;
+  layout(); tick(); loadUsers();
+});
+
+// ---------- rendering: panel ----------
+function statusClass(st) {
+  const s = String(st || '').toUpperCase();
+  if (s === 'ONLINE') return 'ok';
+  if (s.indexOf('MATCH') >= 0 || s === 'IN_MATCH' || s === 'PLAYING') return 'play';
+  if (s === 'PAUSED') return 'pause';
+  if (s === 'ERROR' || s === 'OFFLINE') return 'bad';
+  return 'wait';
+}
+function statusLabel(st) { return String(st || 'UNKNOWN').replace(/_/g, ' '); }
+
+function renderKeyCard(info) {
+  const box = $('#keycard');
+  if (!info || !info.name) { box.innerHTML = ''; box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  const pct = info.max_accounts ? Math.min(100, Math.round(info.used / info.max_accounts * 100)) : 0;
+  box.innerHTML =
+    '<div class="keycard">' +
+      '<div><div class="k">Account name (fixed)</div><div class="kname">' + esc(info.name) + '</div></div>' +
+      '<div><div class="k">Squads</div><div class="v">' + Math.ceil(info.used / 4) + ' / ' + info.squad_limit + '</div></div>' +
+      '<div><div class="k">Accounts</div><div class="v">' + info.used + ' / ' + info.max_accounts + '</div></div>' +
+      '<div><div class="k">Max users</div><div class="v">' + info.max_users + '</div></div>' +
+      '<div class="meter"><div class="bar"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="meta"><span>' + fmt(info.remaining) + ' account slots left</span><span>' + pct + '% used</span></div></div>' +
+    '</div>';
+}
+
+function canDelete(a) { return ROLE === 'admin' || a.added_by === 'user'; }
+
+function accountRow(a, showOwner) {
+  const uid = esc(a.uid), auth = esc(a.auth_uid || '');
+  const del = canDelete(a)
+    ? '<button class="small danger" data-act="delete" data-uid="' + uid + '" data-auth="' + auth + '">Delete</button>'
+    : '';
+  return '<tr>' +
+    (showOwner ? '<td><span class="gold">' + esc(a.owner || '-') + '</span></td>' : '') +
+    '<td><div class="nick">' + esc(a.nickname) + '</div><div class="tiny">' + esc(a.region || '') + '</div></td>' +
+    '<td class="mono">' + uid + '</td>' +
+    '<td class="mono gold">' + esc(a.guild || '-') + '</td>' +
+    (showOwner ? '' : '<td><span class="tag">' + esc(a.squad || '-') + '</span></td>') +
+    (showOwner ? '<td class="tiny">' + esc(a.added_by || '-') + '</td>' : '') +
+    '<td><span class="st ' + statusClass(a.status) + '">' + esc(statusLabel(a.status)) + '</span></td>' +
+    '<td>' + esc(a.level) + '</td>' +
+    '<td>' + fmt(a.current_exp) + '</td>' +
+    '<td>+' + fmt(a.gained_exp) + '</td>' +
+    '<td>' + fmt(a.matches_played) + '</td>' +
+    '<td>' + fmt(a.active_matches) + '</td>' +
+    '<td>' + fmtUp(a.uptime_seconds) + '</td>' +
+    '<td><div class="rowbtn">' +
+      '<button class="small" data-act="pause" data-uid="' + uid + '">' + (a.is_paused ? 'Resume' : 'Pause') + '</button>' +
+      '<button class="small" data-act="refresh" data-uid="' + uid + '">Refresh</button>' +
+      '<button class="small" data-act="restart" data-uid="' + uid + '">Restart</button>' + del +
+    '</div></td>' +
+  '</tr>';
+}
+
+function renderAccounts(list) {
+  $('#accRows').innerHTML = list.map(function (a) { return accountRow(a, false); }).join('');
+  $('#accEmpty').classList.toggle('hidden', list.length > 0);
+}
+function renderGuilds(groups) {
+  if (!groups || !groups.length) {
+    $('#guildCards').innerHTML = '<div class="empty" style="grid-column:1/-1">No guild joined yet. Accounts appear here with their guild UID.</div>';
+    return;
+  }
+  $('#guildCards').innerHTML = groups.map(function (g) {
+    return '<div class="glass gcard tilt"><h3><span>Guild</span><span class="tag">' + g.count + ' accounts</span></h3>' +
+      '<div class="gid">' + esc(g.guild) + '</div>' +
+      '<div class="chipline">' + g.accounts.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') + '</div></div>';
+  }).join('');
+}
+function renderSquads(list) {
+  const groups = {};
+  list.forEach(function (a) { const k = a.squad || 'sq0'; (groups[k] = groups[k] || []).push(a); });
+  const keys = Object.keys(groups).sort(function (x, y) {
+    return (parseInt(x.replace(/\D/g, ''), 10) || 0) - (parseInt(y.replace(/\D/g, ''), 10) || 0);
+  });
+  if (!keys.length) { $('#squads').innerHTML = '<div class="empty" style="grid-column:1/-1">No groups yet.</div>'; return; }
+  $('#squads').innerHTML = keys.map(function (k, idx) {
+    const m = groups[k], full = m.length >= 4;
+    const slots = [0, 1, 2, 3].map(function (i) {
+      const a = m[i];
+      if (!a) return '<div class="chipline"><span style="opacity:.4">empty slot</span></div>';
+      return '<div class="chipline"><span>' + esc(a.nickname) + '</span><span class="st ' + statusClass(a.status) + '" style="font-size:9.5px">' + esc(statusLabel(a.status)) + '</span></div>';
+    }).join('');
+    return '<div class="glass gcard tilt"><h3><span>Group ' + (idx + 1) + '</span><span class="tag ' + (full ? 'full' : '') + '">' +
+      m.length + '/4' + (full ? ' · FULL' : '') + '</span></h3><div style="margin-top:8px">' + slots + '</div></div>';
+  }).join('');
+}
+function renderLogs(list) {
+  $('#logs').innerHTML = list.slice().reverse().map(function (l) {
+    return '<div class="log ' + esc(l.level) + '">[' + esc(l.time) + '] ' + esc(l.message) + '</div>';
+  }).join('');
+}
+function renderBulk(b) {
+  const box = $('#bulk');
+  const busy = b && (b.state === 'queued' || b.state === 'running');
+  if (!b || b.state === 'idle') { box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  const total = Number(b.total) || 0, done = Number(b.done) || 0;
+  $('#bulk-t').textContent = busy ? 'Generating accounts' : (b.state === 'done' ? 'Batch complete' : 'Batch failed');
+  $('#bulk-s').textContent = done + ' / ' + total + ' · guild ' + (b.guild || '-') + ' · ' + (b.reason || '');
+  $('#bulk-bar').style.width = (total ? Math.round(done / total * 100) : 0) + '%';
+}
+function renderGen(b) {
+  const busy = b && (b.state === 'queued' || b.state === 'running');
+  $('#gen').classList.toggle('show', !!busy);
+  if (!busy) return;
+  const total = Number(b.total) || 0, done = Number(b.done) || 0;
+  $('#gen-t').textContent = 'Generating ' + done + ' / ' + total;
+  $('#gen-s').textContent = done === 0 ? 'Connecting to server...' : 'Logging in and joining guild...';
+  $('#gen-bar').style.width = (total ? Math.max(5, Math.round(done / total * 100)) : 5) + '%';
+}
+
+// ---------- rendering: admin all accounts ----------
+function renderAll(list) {
+  $('#allRows').innerHTML = list.map(function (a) { return accountRow(a, true); }).join('');
+  $('#allEmpty').classList.toggle('hidden', list.length > 0);
+}
+
+// ---------- tick ----------
+async function tick() {
+  const s = await api('/api/stats');
+  if (!s || s.total_accounts === undefined) { $('#dot').classList.add('off'); return; }
+  $('#dot').classList.remove('off');
+  if (ROLE === 'admin') {
+    VIEW = s.view || ''; VIEW_NAME = s.view_name || VIEW_NAME;
+  }
+  if (s.key_info) KEYINFO = s.key_info;
+  layout();
+  if (inPanel()) {
+    renderKeyCard(KEYINFO);
+    $('#s-acc').textContent = fmt(s.total_accounts);
+    $('#s-act').textContent = fmt(s.total_active_matches);
+    $('#s-exp').textContent = fmt(s.total_gained_exp);
+    $('#s-match').textContent = fmt(s.total_matches);
+    $('#s-eph').textContent = fmt(s.exp_per_hour);
+    $('#s-up').textContent = fmtUp(s.uptime);
+    renderGuilds(s.guilds || []);
+    renderSquads(s.accounts || []);
+    renderAccounts(s.accounts || []);
+    renderLogs(s.logs || []);
+    renderBulk(s.bulk_status);
+    renderGen(s.bulk_status);
+    updateCountHint();
+  } else if (TAB === 'overview') {
+    renderAll(s.accounts || []);
+    renderLogs(s.logs || []);
+    renderGen(s.bulk_status);
+  } else {
+    renderGen(s.bulk_status);
+    if (Date.now() - pollUsers > 3500) { pollUsers = Date.now(); loadUsers(); }
+  }
+  const b = s.bulk_status || {};
+  if (lastBulk && (lastBulk.state === 'running' || lastBulk.state === 'queued') && b.state === 'done') {
+    toast('Batch complete: ' + (b.done || 0) + ' accounts created', 'ok');
+  }
+  lastBulk = b;
+}
+
+// ---------- account actions ----------
+document.addEventListener('click', async function (e) {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const act = b.dataset.act, uid = b.dataset.uid, auth = b.dataset.auth || '';
+  let r = null;
+  if (act === 'pause') r = await api('/api/account/pause', { uid: uid });
+  else if (act === 'refresh') r = await api('/api/account/refresh', { uid: uid });
+  else if (act === 'restart') r = await api('/api/account/restart', { uid: uid });
+  else if (act === 'delete') {
+    if (!confirm('Delete account ' + uid + '?')) return;
+    r = await api('/api/account/delete', { uid: uid, auth_uid: auth });
+  }
+  else if (act === 'pause_all') r = await api('/api/account/pause_all', {});
+  else if (act === 'clear_logs') r = await api('/api/logs/clear', {});
+  if (r && r.status === 'error') toast(r.error || 'Action failed', 'bad');
+  tick();
+});
+
+// ---------- create accounts (panel) ----------
+let picked = 4;
+function setChips() { document.querySelectorAll('button.chip').forEach(function (c) { c.classList.toggle('active', Number(c.dataset.n) === picked); }); }
+function updateCountHint() {
+  const n = parseInt($('#count').value, 10) || 0;
+  let t = n > 0 ? (n + ' accounts → ' + Math.ceil(n / 4) + ' group(s) of 4') : '';
+  if (KEYINFO && KEYINFO.remaining !== undefined && inPanel()) t += ' · ' + KEYINFO.remaining + ' slots left';
+  $('#countHint').textContent = t;
+  $('#createHint').textContent = (ROLE !== 'admin' || VIEW)
+    ? 'Account name is fixed for this key: ' + (KEYINFO ? KEYINFO.name : VIEW_NAME)
+    : 'Admin: name is free, no limits.';
+}
+document.querySelectorAll('button.chip').forEach(function (c) {
+  c.addEventListener('click', function () { picked = Number(c.dataset.n); $('#count').value = picked; setChips(); updateCountHint(); });
+});
+$('#count').addEventListener('input', function () { picked = Number($('#count').value); setChips(); updateCountHint(); });
+
+$('#createBtn').addEventListener('click', async function () {
+  const count = parseInt($('#count').value, 10);
+  const guild = $('#guild').value.trim();
+  const region = $('#region').value;
+  let name = $('#name').value.trim();
+  if (!(count >= 1 && count <= 12)) return setMsg('#createMsg', 'Count must be 1 to 12', 'bad');
+  if (!/^\d+$/.test(guild)) return setMsg('#createMsg', 'Guild UID must be numbers only', 'bad');
+  const freeName = (ROLE === 'admin' && !VIEW);
+  if (freeName && !/^[A-Za-z0-9_]{1,12}$/.test(name || 'JAMIUL')) return setMsg('#createMsg', 'Name: letters, digits, _ (max 12)', 'bad');
+  const body = { count: count, guild_uid: guild, region: region };
+  if (freeName) body.name = name || 'JAMIUL';
+  $('#createBtn').disabled = true;
+  setMsg('#createMsg', 'Starting...');
+  const r = await api('/api/bulk/create', body);
+  if (r.status === 'ok') {
+    setMsg('#createMsg', 'Started: ' + r.count + ' accounts on ' + r.region, 'ok');
+    $('#gen').classList.add('show');
+    tick();
+  } else {
+    setMsg('#createMsg', r.error || 'Failed', 'bad');
+  }
+  $('#createBtn').disabled = false;
+});
+
+// ---------- admin: users ----------
+async function loadUsers() {
+  if (ROLE !== 'admin') return;
+  const r = await api('/api/admin/keys');
+  const rows = (r && r.keys) || [];
+  $('#keyEmpty').classList.toggle('hidden', rows.length > 0);
+  $('#keyRows').innerHTML = rows.map(function (k) {
+    const kk = esc(k.key);
+    return '<tr>' +
+      '<td><div class="nick gold">' + esc(k.name) + '</div></td>' +
+      '<td><span class="keyval">' + kk + '</span></td>' +
+      '<td>' + (k.guilds.length ? k.guilds.map(function (g) { return '<div class="mono">' + esc(g) + '</div>'; }).join('') : '<span class="tiny">none</span>') + '</td>' +
+      '<td>' + k.used + ' / ' + k.max_accounts + '</td>' +
+      '<td><div class="stepper"><button class="small" data-kact="mu-" data-key="' + kk + '">−</button>' +
+        '<span>' + k.active_users + ' / ' + k.max_users + '</span><button class="small" data-kact="mu+" data-key="' + kk + '">+</button></div></td>' +
+      '<td><div class="stepper"><button class="small" data-kact="sq-" data-key="' + kk + '">−</button>' +
+        '<span>' + k.squad_limit + '</span><button class="small" data-kact="sq+" data-key="' + kk + '">+</button></div></td>' +
+      '<td><span class="switch ' + (k.enabled ? 'on' : '') + '" data-kact="toggle" data-key="' + kk + '"></span></td>' +
+      '<td><div class="rowbtn">' +
+        '<button class="small primary" data-kact="open" data-key="' + kk + '">Open panel</button>' +
+        '<button class="small" data-kact="copy" data-key="' + kk + '">Copy</button>' +
+        '<button class="small danger" data-kact="del" data-key="' + kk + '">Delete</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+}
+document.addEventListener('click', async function (e) {
+  const b = e.target.closest('[data-kact]');
+  if (!b) return;
+  const act = b.dataset.kact, key = b.dataset.key;
+  let res = null;
+  if (act === 'copy') { if (navigator.clipboard) navigator.clipboard.writeText(key); toast('Key copied', 'ok'); return; }
+  if (act === 'open') return openView(key);
+  if (act === 'del') {
+    if (!confirm('Delete this key? The user loses access. Their accounts stay.')) return;
+    res = await api('/api/admin/keys/delete', { key: key });
+  } else if (act === 'toggle') {
+    const on = b.classList.contains('on');
+    res = await api('/api/admin/keys/update', { key: key, enabled: !on });
+  } else {
+    const kr = await api('/api/admin/keys');
+    const k = (kr.keys || []).find(function (x) { return x.key === key; });
+    if (!k) return;
+    if (act === 'sq+') res = await api('/api/admin/keys/update', { key: key, squad_limit: k.squad_limit + 1 });
+    if (act === 'sq-') res = await api('/api/admin/keys/update', { key: key, squad_limit: Math.max(0, k.squad_limit - 1) });
+    if (act === 'mu+') res = await api('/api/admin/keys/update', { key: key, max_users: k.max_users + 1 });
+    if (act === 'mu-') res = await api('/api/admin/keys/update', { key: key, max_users: Math.max(1, k.max_users - 1) });
+  }
+  if (res && res.status === 'error') toast(res.error, 'bad'); else toast('Saved', 'ok');
+  loadUsers();
+});
+$('#kCreate').addEventListener('click', async function () {
+  const name = $('#kName').value.trim();
+  const sq = parseInt($('#kSquad').value, 10), mu = parseInt($('#kUsers').value, 10);
+  if (!/^[A-Za-z0-9_]{1,12}$/.test(name)) return setMsg('#kMsg', 'Name: letters, digits, _ (max 12)', 'bad');
+  if (!(sq >= 1 && sq <= 100) || !(mu >= 1 && mu <= 100)) return setMsg('#kMsg', 'Squad and user limits: 1 to 100', 'bad');
+  const r = await api('/api/admin/keys/create', { name: name, squad_limit: sq, max_users: mu });
+  if (r.status !== 'ok') return setMsg('#kMsg', r.error || 'Failed', 'bad');
+  setMsg('#kMsg', 'Key generated', 'ok');
+  $('#newKeyVal').textContent = r.key;
+  $('#newKey').style.display = 'block';
+  $('#kName').value = '';
+  loadUsers();
+});
+$('#copyKey').addEventListener('click', function () {
+  if (navigator.clipboard) navigator.clipboard.writeText($('#newKeyVal').textContent);
+  toast('Key copied', 'ok');
+});
+
+setChips();
+updateCountHint();
+</script>
+</body>
+  </html>
